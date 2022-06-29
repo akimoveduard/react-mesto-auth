@@ -1,18 +1,28 @@
 import React from 'react';
 import PopupWithForm from './PopupWithForm';
+import { useForm } from '../hooks/useForm';
 
-function EditAvatarPopup({isOpen, onClose, onUpdateAvatar}) {
+function EditAvatarPopup({
+  isOpen,
+  onClose,
+  onUpdateAvatar
+}) {
 
-  const urlAvatar = React.useRef('');
+  const {
+    values,
+    handleChange,
+    setValues
+  } = useForm({ avatar: '' });
 
   function handleSubmit(event) {
     event.preventDefault();
     
-    onUpdateAvatar(
-      urlAvatar.current.value
-    );
-    urlAvatar.current.value = '';
+    onUpdateAvatar(values.avatar);
   }
+
+  React.useEffect(() => {
+    setValues({ avatar: '' });
+  }, [isOpen]);
 
   return (
     <PopupWithForm
@@ -27,7 +37,8 @@ function EditAvatarPopup({isOpen, onClose, onUpdateAvatar}) {
         className="popup__input"
         type="url"
         name="avatar"
-        ref={urlAvatar}
+        onChange={handleChange}
+        value={values.avatar}
         required
         placeholder="Ссылка на аватар"
         aria-label="Ссылка на аватар"

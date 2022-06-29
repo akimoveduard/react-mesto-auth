@@ -1,5 +1,13 @@
 export const BASE_URL = 'https://auth.nomoreparties.co';
 
+function handleResponse(response) {
+  if (response.ok) {
+    return response.json();
+  } else {
+    return Promise.reject(`Ошибка ${response.status}: ${response.statusText}`);
+  }
+}
+
 export const register = (email, password) => {
   
   return fetch(`${BASE_URL}/signup`, {
@@ -12,12 +20,8 @@ export const register = (email, password) => {
       "email": email
     })
   })
-  .then((response) => {
-    return response.status;
-  })
-  .catch((error) => console.log(error));
+  .then(response => handleResponse(response));
 }
-
 
 export const login = (email, password) => {
 
@@ -31,16 +35,7 @@ export const login = (email, password) => {
       "email": email
     })
   })
-  .then((response) => {
-    return response.json();
-  })
-  .then((data) => {
-    if (data.token) {
-      localStorage.setItem('jwt', data.token);
-      return data;
-    }
-  })
-  .catch((error) => console.log(error));
+  .then(response => handleResponse(response));
 }
 
 export const checkToken = (token) => {
@@ -52,7 +47,5 @@ export const checkToken = (token) => {
       "Authorization" : `Bearer ${token}`
     }
   })
-  .then(response => response.json())
-  .then((data) => data)
-  .catch((error) => console.log(error));
+  .then(response => handleResponse(response));
 }

@@ -14,9 +14,7 @@ function PopupWithForm({isOpen, onClose, onSubmit, name, title, buttonCaption='Ð
         <form
           className="form popup__form"
           name={name}
-          method="get"
           onSubmit={onSubmit}
-          noValidate
         >
           {children}
           <button
@@ -27,8 +25,6 @@ function PopupWithForm({isOpen, onClose, onSubmit, name, title, buttonCaption='Ð
             {buttonCaption}
           </button>
         </form>
-        <div>
-    </div>
       </div>
     </section>
   );

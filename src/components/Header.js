@@ -1,4 +1,4 @@
-import Logo from '../images/logo.svg';
+import logo from '../images/logo.svg';
 import { NavLink, useLocation } from 'react-router-dom';
 
 function Header({
@@ -14,7 +14,7 @@ function Header({
   return (
     <header className="header">
       <div className="header__container">
-        <img className="logo" src={Logo} alt="Mesto Russia" />
+        <img className="logo" src={logo} alt="Mesto Russia" />
 
         {!isLoggedIn && (
           <nav className="header__nav">
