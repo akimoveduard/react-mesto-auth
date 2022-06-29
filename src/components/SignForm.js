@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 
 function SignForm ({
   onSubmit,
@@ -18,9 +17,7 @@ function SignForm ({
           <form
             className="form signform__form"
             name={name}
-            method="get"
             onSubmit={onSubmit}
-            noValidate
           >
             {children}
             <button

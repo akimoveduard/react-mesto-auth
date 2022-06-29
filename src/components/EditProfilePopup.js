@@ -1,35 +1,30 @@
 import React from 'react';
 import PopupWithForm from './PopupWithForm';
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
+import { useForm } from '../hooks/useForm';
 
 function EditProfilePopup({isOpen, onClose, onUpdateUser}) {
 
   const currentUser = React.useContext(CurrentUserContext);
 
-  const [userName, setUserName] = React.useState('');
-  const [userDescription, setUserDescription] = React.useState('');
-
-  React.useEffect(() => {
-    setUserName(currentUser.name);
-    setUserDescription(currentUser.about);
-  }, [currentUser]);
-
-  function handleChangeName(event) {
-    setUserName(event.target.value);
-  }
-
-  function handleChangeDescription(event) {
-    setUserDescription(event.target.value);
-  }
+  const {
+    values,
+    handleChange,
+    setValues
+  } = useForm({ name: currentUser.name, about: currentUser.about });
 
   function handleSubmit(event) {
     event.preventDefault();
 
     onUpdateUser({
-      name: userName,
-      about: userDescription,
+      name: values.name,
+      about: values.about,
     });
   }
+
+  React.useEffect(() => {
+    setValues({ name: currentUser.name, about: currentUser.about });
+  }, [currentUser, isOpen]);
 
   return (
     <PopupWithForm
@@ -41,11 +36,11 @@ function EditProfilePopup({isOpen, onClose, onUpdateUser}) {
       title="Редактировать профиль"
     >
       <input
-        value={userName}
-        onChange={handleChangeName}
+        value={values.name}
+        onChange={handleChange}
         className="popup__input"
         type="text"
-        name="username"
+        name="name"
         required
         autoFocus
         placeholder="Имя"
@@ -56,8 +51,8 @@ function EditProfilePopup({isOpen, onClose, onUpdateUser}) {
       />
       <span className="popup__error username-input-error"></span>
       <input
-        value={userDescription}
-        onChange={handleChangeDescription}
+        value={values.about}
+        onChange={handleChange}
         className="popup__input"
         type="text"
         name="about"

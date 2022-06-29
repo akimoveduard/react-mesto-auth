@@ -37,36 +37,52 @@ function App() {
   const [cards, setCards] = React.useState([]);
   const [selectedCard, setSelectedCard] = React.useState({});
 
-  const [isEditProfilePopupOpen, setEditProfilePopupOpen] = React.useState(false);
-  const [isAddPlacePopupOpen, setAddPlacePopupOpen] = React.useState(false);
-  const [isEditAvatarPopupOpen, setEditAvatarPopupOpen] = React.useState(false);
-  const [isInfoTooltipPopupOpen, setInfoTooltipPopupOpen] = React.useState(false);
-  const [isImagePopupOpen, setImagePopupOpen] = React.useState(false);
+  const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = React.useState(false);
+  const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false);
+  const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = React.useState(false);
+  const [isInfoTooltipPopupOpen, setIsInfoTooltipPopupOpen] = React.useState(false);
+  const [isImagePopupOpen, setIsImagePopupOpen] = React.useState(false);
+
+  const isPopupOpened = isEditAvatarPopupOpen || isEditProfilePopupOpen || isAddPlacePopupOpen || selectedCard.link || isInfoTooltipPopupOpen;
+
+  React.useEffect(() => {    
+    
+    function closeByEscape(event) {
+      if (event.key === 'Escape') {
+        closeAllPopups();
+      }
+    }
+
+    if (isPopupOpened) {
+      document.addEventListener('keydown', closeByEscape);
+      return () => document.removeEventListener('keydown', closeByEscape);
+    }
+  }, [isPopupOpened])
 
 
   function handleEditAvatarClick() {
-    setEditAvatarPopupOpen(true);
+    setIsEditAvatarPopupOpen(true);
   }
 
   function handleEditProfileClick() {
-    setEditProfilePopupOpen(true);
+    setIsEditProfilePopupOpen(true);
   }
 
   function handleAddPlaceClick() {
-    setAddPlacePopupOpen(true);
+    setIsAddPlacePopupOpen(true);
   }
 
   function handleCardClick(card) {
-    setImagePopupOpen(true);
+    setIsImagePopupOpen(true);
     setSelectedCard(card);
   }
 
   function closeAllPopups() {
-    setEditProfilePopupOpen(false);
-    setEditAvatarPopupOpen(false);
-    setAddPlacePopupOpen(false);
-    setImagePopupOpen(false);
-    setInfoTooltipPopupOpen(false);
+    setIsEditProfilePopupOpen(false);
+    setIsEditAvatarPopupOpen(false);
+    setIsAddPlacePopupOpen(false);
+    setIsImagePopupOpen(false);
+    setIsInfoTooltipPopupOpen(false);
     setSelectedCard({});
   }
 
@@ -89,22 +105,22 @@ function App() {
     api.updateProfile(user.name, user.about)
       .then((user) => {
         setCurrentUser(user);
+        closeAllPopups();
       })
       .catch((error) => {
         console.log(error)
       })      
-    closeAllPopups();
   }
 
   function handleUpdateAvatar(url) {
     api.updateAvatar(url)
     .then((user) => {
       setCurrentUser(user);
+      closeAllPopups();
     })
     .catch((error) => {
       console.log(error)
     })
-    closeAllPopups();
   }
 
   function handleCardLike(card) {
@@ -121,7 +137,7 @@ function App() {
   function handleCardDelete(card) {
     api.deleteCard(card._id)
       .then(() => {
-        setCards(cards.filter(c => c._id !== card._id));
+        setCards((state) => state.filter((c) => c._id !== card._id));
       })
       .catch((error) => {
         console.log(error)
@@ -132,37 +148,39 @@ function App() {
     api.addCard(card.name, card.link)
       .then((newCard) => {
         setCards([newCard, ...cards]);
+        closeAllPopups();
       })
       .catch((error) => {
         console.log(error)
       });
-      closeAllPopups();
   }
 
   function handleLogin(data) {
     auth.login(data.email, data.password)
-      .then((res) => {
-        if (res) {
-          checkToken();
-        } else {
-          setInfoTooltipPopupOpen(true);
-          setSuccess(false);
-        }
+      .then((data) => {
+        localStorage.setItem('jwt', data.token);
+        checkToken();
       })
+      .catch(error => {
+        setSuccess(false);
+        setIsInfoTooltipPopupOpen(true);        
+        console.log(error);
+      });
   }
 
   function handleRegistration(data) {
     auth.register(data.email, data.password)
       .then((res) => {
-        if (res === 201) {
-          setSuccess(true);
-          setInfoTooltipPopupOpen(true);
-          history.push('/sign-in');
-        } else {
-          setSuccess(false);
-          setInfoTooltipPopupOpen(true);
-        }
+        setSuccess(true);
+        history.push('/sign-in');
       })
+      .catch(error => {
+        setSuccess(false);
+        console.log(error);
+      })
+      .finally(() => {
+        setIsInfoTooltipPopupOpen(true);
+      });
   };
 
   function checkToken() {
@@ -173,9 +191,13 @@ function App() {
         setUserEmail(res.data.email)
         setLoggedIn(true);
         getInitialData();
-        history.push('/');
-        closeAllPopups();
+        history.push('/');        
       })
+      .catch(error => {
+        setSuccess(false);
+        setIsInfoTooltipPopupOpen(true);
+        console.log(error);
+      });
     }
   }
 
@@ -187,7 +209,7 @@ function App() {
 
   React.useEffect(() => {
     checkToken();
-  }, []);
+  }, [isLoggedIn]);
 
   return (
     <CurrentUserContext.Provider value={currentUser}>

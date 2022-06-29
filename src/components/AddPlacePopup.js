@@ -1,29 +1,27 @@
 import React from 'react';
 import PopupWithForm from './PopupWithForm';
+import { useForm } from '../hooks/useForm';
 
 function AddPlacePopup({isOpen, onClose, onAddPlace}) {
 
-  const [name, setName] = React.useState('');
-  const [link, setLink] = React.useState('');
-
-  function onChangeName(event) {
-    setName(event.target.value);
-  }
-
-  function onChangeLink(event) {
-    setLink(event.target.value);
-  }
+  const {
+    values,
+    handleChange,
+    setValues
+  } = useForm({ caption: '', link: '' });
 
   function handleSubmit(event) {
     event.preventDefault();
-    
+
     onAddPlace({
-      name: name,
-      link: link
+      name: values.caption,
+      link: values.link
     });
-    setName('');
-    setLink('');
   }
+
+  React.useEffect(() => {
+    setValues({ caption: '', link: '' });
+  }, [isOpen]);
 
   return (
     <PopupWithForm
@@ -36,8 +34,8 @@ function AddPlacePopup({isOpen, onClose, onAddPlace}) {
       buttonCaption="Создать"
     >
       <input
-        onChange={onChangeName}
-        value={name}
+        onChange={handleChange}
+        value={values.caption}
         className="popup__input"
         type="text"
         name="caption"
@@ -51,8 +49,8 @@ function AddPlacePopup({isOpen, onClose, onAddPlace}) {
       />
       <span className="popup__error caption-input-error"></span>
       <input
-        onChange={onChangeLink}
-        value={link}
+        onChange={handleChange}
+        value={values.link}
         className="popup__input"
         type="url"
         name="link"
