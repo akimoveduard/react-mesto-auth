@@ -216,7 +216,7 @@ function App() {
             />
           </Route>
           <ProtectedRoute
-            exact path="/"
+            path="/"
             loggedIn={isLoggedIn}
             component={Main}
             onEditProfile={handleEditProfileClick}
