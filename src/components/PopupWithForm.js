@@ -1,15 +1,14 @@
 import React from 'react';
+import Popup from './Popup';
 
 function PopupWithForm({isOpen, onClose, onSubmit, name, title, buttonCaption='Сохранить', children}) {
 
   return (
-    <section className={`popup popup_type_${name} ${isOpen && 'popup_opened'}`}>
-      <div className="popup__wrapper">
-        <button
-          className="popup__close"
-          type="button"
-          onClick={onClose}
-        ></button>
+      <Popup 
+        isOpen={isOpen}
+        name={name}
+        onClose={onClose}
+      >
         <h2 className="popup__title">{title}</h2>
         <form
           className="form popup__form"
@@ -25,8 +24,7 @@ function PopupWithForm({isOpen, onClose, onSubmit, name, title, buttonCaption='�
             {buttonCaption}
           </button>
         </form>
-      </div>
-    </section>
+      </Popup>
   );
 }
 

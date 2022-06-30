@@ -45,21 +45,6 @@ function App() {
 
   const isPopupOpened = isEditAvatarPopupOpen || isEditProfilePopupOpen || isAddPlacePopupOpen || selectedCard.link || isInfoTooltipPopupOpen;
 
-  React.useEffect(() => {    
-    
-    function closeByEscape(event) {
-      if (event.key === 'Escape') {
-        closeAllPopups();
-      }
-    }
-
-    if (isPopupOpened) {
-      document.addEventListener('keydown', closeByEscape);
-      return () => document.removeEventListener('keydown', closeByEscape);
-    }
-  }, [isPopupOpened])
-
-
   function handleEditAvatarClick() {
     setIsEditAvatarPopupOpen(true);
   }
