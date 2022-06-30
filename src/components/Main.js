@@ -64,17 +64,15 @@ function Main({
       </section>
       <section className="photo-grid" aria-label="Карточки мест">
         <ul className="photo-grid__list">
-          <CurrentUserContext.Provider value={currentUser}>
-            {cards.map((card) => (
-              <Card
-                key={card._id}
-                card={card}
-                onCardClick={onCardClick}
-                onCardLike={onCardLike}
-                onCardDelete={onCardDelete}
-              />
-            ))}
-          </CurrentUserContext.Provider>
+          {cards.map((card) => (
+            <Card
+              key={card._id}
+              card={card}
+              onCardClick={onCardClick}
+              onCardLike={onCardLike}
+              onCardDelete={onCardDelete}
+            />
+          ))}
         </ul>
       </section>
     </div>
